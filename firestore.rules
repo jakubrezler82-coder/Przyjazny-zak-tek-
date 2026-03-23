@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (UID)
+    // Fields: uid, displayName, email, individualNumber, prepStatus, lastHivTest, lastSyphilisTest, role
+    //
+    // Collection: journal
+    // Document ID: auto-generated
+    // Fields: userId, date, topic, content, moodScore, isDepressive, voiceNoteUrl, videoNoteUrl
+    //
+    // Collection: dates
+    // Document ID: auto-generated
+    // Fields: userId, partnerName, contact, moodBefore, moodAfter, sexOccurred, likes, dislikes, redFlags, wantToMeetAgain, location, timestamp
+    //
+    // Collection: sex_encounters
+    // Document ID: auto-generated
+    // Fields: userId, partnerId, partnerName, typeOfSex, chemsex, protection, protectionOther, symptoms, impressions, partnerPrep, partnerLastHiv, partnerLastSyphilis, timestamp
+    //
+    // Collection: notifications
+    // Document ID: auto-generated
+    // Fields: fromUserId, toUserId, encounterDate, timestamp, read
+    //
+    // Collection: admin_content
+    // Document ID: auto-generated (or slug)
+    // Fields: slug, title, body, lastUpdated
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "jakub.rezler82@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'individualNumber']) &&
+             data.uid is string && data.email is string &&
+             data.individualNumber is string && data.individualNumber.size() >= 6;
+    }
+
+    // Rules
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    match /journal/{entryId} {
+      allow read, write: if true;
+    }
+
+    match /dates/{dateId} {
+      allow read, write: if true;
+    }
+
+    match /sex_encounters/{encounterId} {
+      allow read, write: if true;
+    }
+
+    match /notifications/{notifId} {
+      allow read, write: if true;
+    }
+
+    match /admin_content/{contentId} {
+      allow read, write: if true;
+    }
+  }
+}

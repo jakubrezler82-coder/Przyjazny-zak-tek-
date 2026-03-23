@@ -1,0 +1,5 @@
+{
+  "name": "HealthJournal & SafeSpace",
+  "description": "A comprehensive health and personal journal app with mood detection, dating logs, and sexual health tracking with QR-based partner notifications.",
+  "requestFramePermissions": ["camera", "microphone"]
+}

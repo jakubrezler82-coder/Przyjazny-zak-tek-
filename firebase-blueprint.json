@@ -1,0 +1,115 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User's personal and health profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "individualNumber": { "type": "string", "description": "A unique 6-8 digit number for QR identification" },
+        "prepStatus": { "type": "boolean" },
+        "lastHivTest": { "type": "string", "format": "date" },
+        "lastSyphilisTest": { "type": "string", "format": "date" },
+        "hivTestIntervalMonths": { "type": "number", "description": "Interval for HIV tests in months" },
+        "syphilisTestIntervalMonths": { "type": "number", "description": "Interval for syphilis tests in months" },
+        "nextHivTestDate": { "type": "string", "format": "date" },
+        "nextSyphilisTestDate": { "type": "string", "format": "date" },
+        "role": { "type": "string", "enum": ["admin", "user"] }
+      },
+      "required": ["uid", "email", "individualNumber"]
+    },
+    "JournalEntry": {
+      "title": "Journal Entry",
+      "description": "A personal journal entry with mood analysis",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "topic": { "type": "string" },
+        "content": { "type": "string", "description": "Rich text content" },
+        "moodScore": { "type": "number", "description": "1-10 scale" },
+        "isDepressive": { "type": "boolean" },
+        "voiceNoteUrl": { "type": "string" },
+        "videoNoteUrl": { "type": "string" }
+      },
+      "required": ["userId", "date", "content"]
+    },
+    "DateLog": {
+      "title": "Dating Log",
+      "description": "Records of dates and impressions",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "partnerName": { "type": "string" },
+        "contact": { "type": "string" },
+        "moodBefore": { "type": "number" },
+        "moodAfter": { "type": "number" },
+        "sexOccurred": { "type": "boolean" },
+        "likes": { "type": "string" },
+        "dislikes": { "type": "string" },
+        "redFlags": { "type": "string" },
+        "wantToMeetAgain": { "type": "boolean" },
+        "location": { "type": "string" },
+        "audioNoteUrl": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "partnerName", "timestamp"]
+    },
+    "SexEncounter": {
+      "title": "Sexual Health Encounter",
+      "description": "Records of sexual encounters and health checks",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "partnerId": { "type": "string", "description": "UID if scanned, else null" },
+        "partnerName": { "type": "string" },
+        "typeOfSex": { "type": "string" },
+        "chemsex": { "type": "boolean" },
+        "protection": { "type": "string", "enum": ["condom", "prep", "other", "none"] },
+        "protectionOther": { "type": "string" },
+        "symptoms": { "type": "array", "items": { "type": "string" } },
+        "impressions": { "type": "string" },
+        "partnerPrep": { "type": "boolean" },
+        "partnerLastHiv": { "type": "string" },
+        "partnerLastSyphilis": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "timestamp"]
+    },
+    "InfectionNotification": {
+      "title": "Infection Notification",
+      "description": "Alerts sent to partners about potential infection",
+      "type": "object",
+      "properties": {
+        "fromUserId": { "type": "string" },
+        "toUserId": { "type": "string" },
+        "encounterDate": { "type": "string", "format": "date" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["fromUserId", "toUserId", "timestamp"]
+    },
+    "AdminContent": {
+      "title": "Admin Content",
+      "description": "Managed pages and text content",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["slug", "title", "body"]
+    }
+  },
+  "firestore": {
+    "users": { "schema": "User", "description": "User profiles" },
+    "journal": { "schema": "JournalEntry", "description": "Journal entries" },
+    "dates": { "schema": "DateLog", "description": "Dating logs" },
+    "sex_encounters": { "schema": "SexEncounter", "description": "Sexual health logs" },
+    "notifications": { "schema": "InfectionNotification", "description": "Partner alerts" },
+    "admin_content": { "schema": "AdminContent", "description": "Managed subpages" }
+  }
+}
